@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14191c">
+  <meta name="description" content="HEBRA: un pequeño juego original sobre recoger luz y hacer florecer un jardín en el vacío. Sin descargas, sin recursos externos.">
+  <title>HEBRA — Un jardín en el vacío</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%2314191c%27/%3E%3Cpath d=%27M16 4v24M4 16h24M7 7l18 18M7 25L25 7%27 stroke=%27%23b9ebc9%27 stroke-width=%271.5%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="HEBRA, inicio"><span class="brand-mark" aria-hidden="true">✳</span> HEBRA<span class="brand-divider"></span><span class="brand-caption">UN JARDÍN EN EL VACÍO</span></a>
+      <button id="sound" class="quiet-button" aria-pressed="false" aria-label="Activar sonido"><span id="sound-icon" aria-hidden="true">♫</span><span id="sound-label">Sonido apagado</span></button>
+    </header>
+
+    <section class="arena" aria-label="Juego Hebra">
+      <canvas id="game" tabindex="0" aria-label="Campo de juego. Muévete con las flechas o WASD. Espacio activa el pulso. P pausa.">Necesitas un navegador con soporte de canvas para jugar a HEBRA.</canvas>
+      <div class="arena-heading" id="intro-heading"><span><i class="status-dot"></i> BOTÁNICA DEL VACÍO <span class="muted">/ 01</span></span><span class="edition">UNA PARTIDA · 90 SEG</span></div>
+
+      <div class="start-panel" id="start-screen">
+        <p class="eyebrow">UN PEQUEÑO EXPERIMENTO JUGABLE</p>
+        <h1>Recoge luz.<br><em>Teje vida.</em></h1>
+        <p class="intro-copy">Eres una aguja. Tu hilo, un puente.<br>Atrapa el rocío del vacío y llévalo al centro para despertar un jardín.</p>
+        <button id="start" class="primary-button">Sembrar una partida <span aria-hidden="true">↗</span></button>
+        <p class="start-note"><span class="tiny-star">✳</span> 36 gotas. 6 flores. Un hilo que cuidar.</p>
+      </div>
+
+      <div class="hud hidden" id="hud">
+        <div class="hud-garden"><span class="eyebrow">EL JARDÍN</span><strong><span id="delivered">0</span><small> / 36</small></strong><div class="garden-progress" id="garden-progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="hud-right"><div class="score-stat"><span class="eyebrow">PUNTOS</span><strong id="score">0000</strong></div><div class="time-stat"><span class="eyebrow">TIEMPO</span><strong id="time">1:30</strong></div><button id="pause" class="icon-button" aria-label="Pausar partida">Ⅱ</button></div>
+      </div>
+
+      <div id="play-bottom" class="play-bottom hidden">
+        <div class="vitality"><div id="hearts" aria-label="3 vidas">✦ ✦ ✦</div><span id="phase">MAREA 01</span></div>
+        <div class="cargo"><span class="eyebrow" id="cargo-label">ROCÍO EN EL HILO</span><div id="cargo-slots" aria-label="0 de 6 gotas"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="cargo-hint">Recoge con toda la hebra</span></div>
+        <button id="pulse" class="pulse-button"><span class="pulse-symbol" aria-hidden="true">◎</span><span><b id="pulse-label">Pulso</b><small>ESPACIO / TOCA</small></span></button>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card"><div class="modal-flower" aria-hidden="true">✳</div><p class="eyebrow" id="modal-kicker">UN RESPIRO EN EL VACÍO</p><h2 id="modal-title">El jardín espera.</h2><p id="modal-copy"></p><div id="results" class="results hidden"><div><span>PUNTUACIÓN</span><strong id="final-score">0</strong></div><div><span>MEJOR MARCA</span><strong id="best-score">0</strong></div></div><button id="modal-action" class="primary-button">Seguir tejiendo <span aria-hidden="true">↗</span></button><button id="back-home" class="text-button hidden">Volver al inicio</button></div>
+      </div>
+      <div class="arena-corner" id="intro-corner"><span class="corner-symbol">⌁</span> LO PEQUEÑO TAMBIÉN FLORECE.</div>
+    </section>
+
+    <section class="field-guide" aria-label="Cómo jugar">
+      <div class="guide-item"><span class="guide-number">01</span><div><h3>Tiende el hilo</h3><p><span class="desktop-tip"><kbd>WASD</kbd> o <kbd>↑ ↓ ← →</kbd> para moverte.</span><span class="touch-tip">Mantén y desliza el dedo para moverte.</span> El rocío se recoge con toda la hebra.</p></div></div>
+      <div class="guide-item"><span class="guide-number">02</span><div><h3>Vuelve a la raíz</h3><p>Lleva hasta 6 gotas al centro. Entrega 36 para hacer florecer el jardín en 90 segundos.</p></div></div>
+      <div class="guide-item"><span class="guide-number">03</span><div><h3>Cuida lo que une</h3><p>La ceniza roja rompe el hilo. <kbd>Espacio</kbd> o <b>Pulso</b> lo protege. Tienes 3 vidas.</p></div></div>
+    </section>
+    <footer class="site-footer"><span>HECHO DE HILOS, LUZ Y UN POCO DE PACIENCIA.</span><span><span class="footer-dot"></span> SIN PRISA. PERO CON 90 SEGUNDOS.</span></footer>
+  </main>
+</body>
+</html>

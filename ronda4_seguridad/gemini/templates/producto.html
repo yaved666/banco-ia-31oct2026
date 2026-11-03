@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block titulo %}{{ p['nombre'] }} - Brisa Outdoor{% endblock %}
+{% block contenido %}
+<h1>{{ p['nombre'] }}</h1>
+<p>{{ p['descripcion'] }}</p>
+<p class="precio">{{ '%.2f'|format(p['precio']) }} EUR</p>
+<p>Quedan {{ p['stock'] }} unidades.</p>
+{% if usuario %}
+<form method="post" action="{{ url_for('comprar', pid=p['id']) }}" class="comprar">
+  <label>Cantidad <input type="number" name="cantidad" value="1" min="1" max="{{ p['stock'] }}"></label>
+  <label>Direccion de envio <input name="direccion" required></label>
+  <button>Comprar</button>
+</form>
+{% else %}
+<p><a href="{{ url_for('login') }}">Entra</a> para comprar o dejar una resena.</p>
+{% endif %}
+<h2>Resenas</h2>
+<ul class="resenas">
+{% for r in resenas %}
+  <li><strong>{{ r['autor'] }}</strong>: {{ r['texto'] }}</li>
+{% else %}
+  <li>Todavia no hay resenas.</li>
+{% endfor %}
+</ul>
+{% if usuario %}
+<form method="post">
+  <label>Tu resena <textarea name="texto" rows="3"></textarea></label>
+  <button>Publicar</button>
+</form>
+{% endif %}
+{% endblock %}

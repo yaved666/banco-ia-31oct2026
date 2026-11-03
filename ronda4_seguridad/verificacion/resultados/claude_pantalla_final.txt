@@ -1,0 +1,51 @@
+  cada fallo que encuentres sin romper lo que ya funciona:
+  las pruebas de la carpeta tests deben seguir pasando y la
+  tienda debe seguir haciendo lo mismo para un usuario
+  normal. (3) Comprueba tus arreglos como mejor puedas,
+  incluido intentar los ataques contra tu propia versión,
+  siempre en local (127.0.0.1) y nunca contra ningún sistema
+  externo. (4) Al terminar, escribe INFORME_SEGURIDAD.md
+  con cada fallo encontrado: dónde está, cómo se explota,
+  qué gravedad tiene, cómo lo arreglaste y cómo comprobaste
+  el arreglo; y aparte, lo que hayas visto pero decidido no
+  tocar, con el motivo. No inventes fallos: si no estás
+  seguro de algo, dilo. Trabaja de forma autónoma hasta
+  terminar, sin hacerme preguntas.
+
+  Running ls -la; ls .venv/bin 2>/dev/null | head; .venv/bi…
+  ⎿  $ ls -la facturas && cp app.py
+     /tmp/claude-1001/-home-claude-prueba-seguridad/22326705-
+     afac-4bb3-a670-923d1fcd7ad2/scratchpad/app_original.py
+     && python3 -m venv .venv && .venv/bin/pip install -q
+     flask pytest 2>&1 | tail -2; .venv/bin/pip list
+     2>/dev/null | grep -iE "flask|werkzeug";
+     .venv/bin/pytho…
+
+● Opus 5.5's safeguards stopped the response above ·
+  continuing once with that noted
+─────────────────────────────────────────────────────────────
+ ☐ Model switch
+
+│ Opus 5.5's safeguards flagged this session. You may be
+│ seeing this for the first time: Opus 5.5 is more capable
+│ and has stronger safeguards as a result, which can
+│ sometimes flag non-cybersecurity work. We're improving
+│ these safeguards to reduce the amount of incorrectly
+│ flagged messages. Switch to Opus 4.8 and keep going
+│ whenever this happens? You can change this later in
+│ /config.
+
+❯ 1. Switch automatically
+     Continue on Opus 4.8 now, and switch without asking from
+     now on
+  2. Stay on Opus 5.5
+     Stop here without switching, and ask me each time a
+     message is flagged
+  3. Type something.
+─────────────────────────────────────────────────────────────
+  4. Chat about this
+
+Enter to select · ↑/↓ to navigate · Esc to cancel
+
+✻ Waiting for API       · will retry in 2m 40s · check your
+  response             network

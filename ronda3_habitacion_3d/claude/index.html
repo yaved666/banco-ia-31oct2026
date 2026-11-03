@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Salón 3D</title>
+<style>
+  :root { --tinta: #f6efe4; --fondo: rgba(24, 20, 16, 0.72); --acento: #e8a85c; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #1a1612; color: var(--tinta);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-user-select: none; user-select: none; }
+  #escena { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+
+  #cargando { position: fixed; inset: 0; display: grid; place-items: center; background: #1a1612; z-index: 50; font-size: 1.1rem; letter-spacing: .05em; }
+
+  #inicio { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px;
+    background: radial-gradient(ellipse at center, rgba(20,16,12,.45), rgba(20,16,12,.8)); cursor: pointer; transition: opacity .3s; }
+  #inicio.oculto { opacity: 0; pointer-events: none; }
+  .panel { max-width: 520px; width: 100%; background: var(--fondo); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 24px 26px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+  .panel h1 { margin: 0 0 4px; font-size: 1.7rem; font-weight: 650; letter-spacing: .01em; }
+  .panel p { margin: 6px 0; line-height: 1.45; color: #e3d9ca; }
+  .panel .sub { color: #bfb3a2; font-size: .92rem; margin-bottom: 14px; }
+  .controles { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; text-align: left; margin: 14px auto 18px; max-width: 360px; font-size: .95rem; }
+  kbd { display: inline-block; min-width: 1.6em; padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2); font: 600 .82rem ui-monospace, monospace; text-align: center; }
+  #btnEntrar { font: 600 1.05rem system-ui, sans-serif; color: #241a10; background: var(--acento); border: 0; border-radius: 999px;
+    padding: 12px 34px; cursor: pointer; box-shadow: 0 6px 20px rgba(232,168,92,.35); }
+  #btnEntrar:hover { filter: brightness(1.08); }
+  .solo-tactil { display: none; }
+  body.tactil .controles.solo-tactil { display: grid; }
+  body.tactil span.solo-tactil { display: inline; }
+  body.tactil .solo-escritorio { display: none; }
+
+  #mira { position: fixed; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+    background: rgba(255,255,255,.85); box-shadow: 0 0 0 1.5px rgba(0,0,0,.35); z-index: 5; pointer-events: none; transition: transform .15s, background .15s; }
+  #mira.activa { transform: scale(2.2); background: var(--acento); }
+  body.tactil #mira { display: none; }
+
+  #etiqueta { position: fixed; left: 50%; top: calc(50% + 22px); transform: translateX(-50%); z-index: 5; pointer-events: none;
+    background: var(--fondo); padding: 6px 12px; border-radius: 8px; font-size: .9rem; white-space: nowrap; opacity: 0; transition: opacity .15s; }
+  #etiqueta.visible { opacity: 1; }
+
+  #aviso { position: fixed; left: 50%; top: 18px; transform: translate(-50%, -10px); z-index: 6; pointer-events: none;
+    background: var(--fondo); padding: 8px 16px; border-radius: 999px; font-size: .95rem; opacity: 0; transition: opacity .2s, transform .2s; }
+  #aviso.visible { opacity: 1; transform: translate(-50%, 0); }
+
+  #botones { position: fixed; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); z-index: 25; display: flex; gap: 8px; }
+  #botones button { font: 600 .9rem system-ui, sans-serif; color: var(--tinta); background: var(--fondo); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 999px; padding: 8px 14px; cursor: pointer; backdrop-filter: blur(4px); }
+  #botones button:hover { background: rgba(40,34,28,.85); }
+
+  #ayuda { position: fixed; left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); z-index: 5;
+    background: var(--fondo); border-radius: 10px; padding: 8px 12px; font-size: .82rem; line-height: 1.55; color: #e3d9ca; pointer-events: none; max-width: calc(100vw - 24px); }
+  #ayuda.oculta { display: none; }
+  body.tactil #ayuda { left: 50%; transform: translateX(-50%); text-align: center; bottom: max(10px, env(safe-area-inset-bottom)); }
+
+  #fps { position: fixed; left: 12px; top: 12px; z-index: 5; font: 600 .8rem ui-monospace, monospace; background: var(--fondo); padding: 4px 8px; border-radius: 6px; display: none; }
+  #fps.visible { display: block; }
+
+  #joy { position: fixed; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; z-index: 6; pointer-events: none;
+    border: 2px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); opacity: 0; transition: opacity .15s; }
+  #joy.visible { opacity: 1; }
+  #joyPomo { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.55);
+    transform: translate(-50%, -50%); }
+</style>
+</head>
+<body>
+<canvas id="escena" tabindex="0"></canvas>
+
+<div id="cargando">Preparando el salón…</div>
+
+<div id="inicio">
+  <div class="panel">
+    <h1 id="tituloInicio">Un salón para pasear</h1>
+    <p class="sub">Estancia 3D modelada y texturizada por código.</p>
+    <div class="controles solo-escritorio">
+      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / flechas</span><span>Moverse (<kbd>Mayús</kbd> para ir más rápido)</span>
+      <span>Ratón</span><span>Mirar alrededor</span>
+      <span>Clic / <kbd>E</kbd></span><span>Encender o apagar la lámpara que miras</span>
+      <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd></span><span>Lámpara de pie, de mesa, de techo, TV</span>
+      <span><kbd>T</kbd></span><span>Día / atardecer / noche</span>
+      <span><kbd>Esc</kbd></span><span>Pausa (liberar el ratón)</span>
+    </div>
+    <div class="controles solo-tactil">
+      <span>Pulgar izquierdo</span><span>Joystick para caminar</span>
+      <span>Arrastrar a la derecha</span><span>Mirar alrededor</span>
+      <span>Tocar una lámpara</span><span>Encenderla o apagarla</span>
+      <span>Botón ☀️</span><span>Día / atardecer / noche</span>
+    </div>
+    <button id="btnEntrar">Entrar</button>
+  </div>
+</div>
+
+<div id="mira"></div>
+<div id="etiqueta"></div>
+<div id="aviso"></div>
+<div id="fps"></div>
+<div id="botones">
+  <button id="btnModo" title="Cambiar momento del día (T)">☀️ Día</button>
+  <button id="btnAyuda" title="Mostrar u ocultar ayuda">?</button>
+</div>
+<div id="ayuda">
+  <span class="solo-escritorio">WASD/flechas · ratón · clic o E en una lámpara · T día/noche · Esc pausa</span>
+  <span class="solo-tactil">Joystick a la izquierda · arrastra para mirar · toca una lámpara</span>
+</div>
+<div id="joy"><div id="joyPomo"></div></div>
+
+<script src="lib/three.min.js"></script>
+<script src="js/texturas.js"></script>
+<script src="js/muebles.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

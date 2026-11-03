@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Clave de sesion generada en la VM al arrancar la version de Codex (aleatoria, no se publica).
+ronda4_seguridad/codex/instance/
+*.db

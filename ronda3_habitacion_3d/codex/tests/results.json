@@ -1,0 +1,106 @@
+{
+  "scene": {
+    "fps": 6,
+    "drawCalls": 36,
+    "triangles": 27506,
+    "objects": [
+      "Sofá",
+      "Mesa de centro",
+      "Butaca",
+      "Mesa auxiliar",
+      "Lámpara",
+      "Aparador",
+      "Estantería",
+      "Planta",
+      "Planta junto a la puerta"
+    ],
+    "colliders": [
+      {
+        "name": "Sofá",
+        "minX": -2.4899999999999998,
+        "maxX": 1.29,
+        "minZ": -3.53,
+        "maxZ": -2.23
+      },
+      {
+        "name": "Mesa de centro",
+        "minX": -1.44,
+        "maxX": 0.7400000000000001,
+        "minZ": -0.6100000000000001,
+        "maxZ": 0.51
+      },
+      {
+        "name": "Butaca",
+        "minX": -4.01,
+        "maxX": -2.49,
+        "minZ": -0.29,
+        "maxZ": 1.19
+      },
+      {
+        "name": "Mesa auxiliar",
+        "minX": -3.35,
+        "maxX": -2.53,
+        "minZ": -1.78,
+        "maxZ": -0.9600000000000002
+      },
+      {
+        "name": "Lámpara",
+        "minX": 1.37,
+        "maxX": 2.09,
+        "minZ": -3.01,
+        "maxZ": -2.29
+      },
+      {
+        "name": "Aparador",
+        "minX": 4.07,
+        "maxX": 4.890000000000001,
+        "minZ": -1.98,
+        "maxZ": 0.68
+      },
+      {
+        "name": "Estantería",
+        "minX": 2.785,
+        "maxX": 4.175,
+        "minZ": -3.92,
+        "maxZ": -3.34
+      },
+      {
+        "name": "Planta",
+        "minX": -4.545,
+        "maxX": -3.6950000000000003,
+        "minZ": -3.565,
+        "maxZ": -2.7150000000000003
+      },
+      {
+        "name": "Planta junto a la puerta",
+        "minX": 3.85,
+        "maxX": 4.55,
+        "minZ": 2.35,
+        "maxZ": 3.0500000000000003
+      }
+    ]
+  },
+  "collisionQueries": {
+    "centers": true,
+    "walls": true,
+    "startFree": true
+  },
+  "objectClick": true,
+  "keyboard": true,
+  "mouseLook": true,
+  "wallMovement": true,
+  "furnitureMovement": {
+    "p": [
+      -2.369756550737541,
+      1.64,
+      -1.972958248398282
+    ],
+    "blocked": false
+  },
+  "offlineFile": true,
+  "touchLamp": true,
+  "joystick": true,
+  "touchLook": true,
+  "errors": [],
+  "externalRequests": []
+}

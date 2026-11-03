@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h1>Pedido {{ o['id'] }}</h1>
+<p>{{ o['cantidad'] }} x {{ o['producto'] }}</p>
+<p>Total: {{ '%.2f'|format(o['total']) }} EUR</p>
+<p>Envio a: {{ o['direccion'] }}</p>
+<p><a href="{{ url_for('factura', archivo=o['factura']) }}">Descargar factura</a></p>
+{% endblock %}

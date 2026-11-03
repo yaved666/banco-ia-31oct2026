@@ -1,0 +1,11 @@
+body{font-family:system-ui,sans-serif;margin:0;color:#1d2a24;background:#f4f6f3}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#23402f;color:#fff}
+header a{color:#fff;margin-left:14px;text-decoration:none}.marca{font-weight:700;margin:0}
+main{max-width:860px;margin:24px auto;padding:0 16px}
+label{display:block;margin:10px 0}input,textarea{display:block;width:100%;max-width:420px;padding:6px}
+button{margin-top:8px;padding:8px 14px;background:#23402f;color:#fff;border:0;border-radius:4px}
+.precio{font-weight:700}.error{color:#a12}.productos li{margin:8px 0}
+table{border-collapse:collapse}td,th{border:1px solid #ccd;padding:4px 8px}
+
+nav form.salir { display: inline; margin: 0; padding: 0; }
+nav form.salir button { font: inherit; cursor: pointer; }

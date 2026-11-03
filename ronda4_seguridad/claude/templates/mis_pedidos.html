@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h1>Mis pedidos</h1>
+<ul>
+{% for o in pedidos %}
+  <li><a href="{{ url_for('pedido', oid=o['id']) }}">Pedido {{ o['id'] }}</a>: {{ o['producto'] }},
+      {{ '%.2f'|format(o['total']) }} EUR</li>
+{% else %}
+  <li>Aun no tienes pedidos.</li>
+{% endfor %}
+</ul>
+{% endblock %}

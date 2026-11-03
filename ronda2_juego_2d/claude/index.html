@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<title>Farol — la última llama</title>
+<style>
+  :root {
+    --ambar: #ffc46b;
+    --ambar-suave: #ffe2a8;
+    --noche: #05060f;
+    --tinta: #f3e6c8;
+    --violeta: #a58bff;
+  }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--noche); color: var(--tinta);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+  }
+  body {
+    position: fixed; inset: 0;
+    touch-action: none; -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent; overscroll-behavior: none;
+  }
+  canvas { position: fixed; inset: 0; display: block; touch-action: none; cursor: crosshair; }
+
+  .capa {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; box-sizing: border-box; overflow-y: auto;
+    background: radial-gradient(circle at 50% 50%, rgba(5,6,15,.35), rgba(5,6,15,.88) 70%);
+    animation: aparece .35s ease-out; touch-action: pan-y;
+  }
+  .capa[hidden] { display: none; }
+  @keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+
+  .panel { width: 100%; max-width: 520px; text-align: center; margin: auto; }
+  h1 {
+    margin: 0; font-size: clamp(54px, 14vw, 96px); letter-spacing: .18em; font-weight: 800;
+    color: var(--ambar-suave); padding-left: .18em;
+    text-shadow: 0 0 18px rgba(255,170,70,.65), 0 0 60px rgba(255,140,40,.35);
+  }
+  h2 { margin: 0 0 6px; font-size: clamp(28px, 8vw, 42px); color: var(--ambar-suave);
+       text-shadow: 0 0 16px rgba(255,170,70,.5); }
+  .sub { margin: 4px 0 18px; color: #cdbf9f; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+  .historia { color: #d9ccb0; line-height: 1.5; font-size: 15px; margin: 0 auto 14px; max-width: 440px; }
+  .reglas {
+    text-align: left; margin: 0 auto 18px; padding: 12px 16px; max-width: 440px;
+    background: rgba(255,200,120,.06); border: 1px solid rgba(255,200,120,.18); border-radius: 12px;
+    font-size: 14px; line-height: 1.55; color: #e8dcc0;
+  }
+  .reglas p { margin: 4px 0; }
+  .reglas b { color: var(--ambar); }
+  kbd {
+    display: inline-block; min-width: 1.4em; padding: 0 .35em; border-radius: 5px; text-align: center;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); font: 600 12px/1.6 ui-monospace, monospace;
+  }
+  .ico { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+  .btn {
+    appearance: none; border: 0; cursor: pointer; font: 700 18px system-ui, sans-serif; letter-spacing: .08em;
+    padding: 14px 34px; border-radius: 999px; color: #2a1606;
+    background: linear-gradient(180deg, #ffe0a0, #ffab45);
+    box-shadow: 0 0 0 2px rgba(255,200,120,.3), 0 0 30px rgba(255,160,60,.45);
+    transition: transform .12s, box-shadow .12s;
+  }
+  .btn:hover, .btn:focus-visible { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(255,220,150,.6), 0 0 44px rgba(255,160,60,.7); outline: none; }
+  .btn:active { transform: scale(.97); }
+  .pista { margin-top: 12px; font-size: 13px; color: #9f957f; }
+  .record { margin-top: 10px; font-size: 14px; color: #cdbf9f; }
+  .puntos { font-size: 56px; font-weight: 800; color: #fff1cf; margin: 6px 0 2px;
+            text-shadow: 0 0 20px rgba(255,180,80,.6); }
+  .nuevo { color: #9dff8a; font-weight: 700; letter-spacing: .1em; text-shadow: 0 0 12px rgba(120,255,100,.6); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px auto 22px; max-width: 360px; }
+  .stats div { background: rgba(255,200,120,.07); border: 1px solid rgba(255,200,120,.15); border-radius: 10px; padding: 8px; }
+  .stats span { display: block; font-size: 12px; color: #a99d84; text-transform: uppercase; letter-spacing: .06em; }
+  .stats b { font-size: 20px; color: var(--ambar-suave); }
+  .solo-tactil { display: none; }
+  body.tactil .solo-tactil { display: block; }
+  body.tactil .solo-teclado { display: none; }
+
+  /* Botones en pantalla */
+  .boton-redondo {
+    position: fixed; z-index: 5; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 1px solid rgba(255,210,140,.35); background: rgba(20,18,30,.55);
+    color: var(--ambar-suave); cursor: pointer; padding: 0; touch-action: none;
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  }
+  #btnDestello {
+    display: none; right: calc(18px + env(safe-area-inset-right)); bottom: calc(18px + env(safe-area-inset-bottom));
+    width: 88px; height: 88px; font: 700 12px system-ui, sans-serif; letter-spacing: .06em; flex-direction: column;
+    box-shadow: 0 0 24px rgba(255,190,90,.35) inset;
+  }
+  #btnDestello svg { width: 34px; height: 34px; margin-bottom: 2px; }
+  #btnDestello.cargando { opacity: .4; box-shadow: none; }
+  body.tactil.jugando #btnDestello { display: flex; }
+  .pequeno { width: 42px; height: 42px; bottom: calc(14px + env(safe-area-inset-bottom)); font-size: 18px; }
+  #btnSonido { left: calc(14px + env(safe-area-inset-left)); }
+  #btnPausa { left: calc(64px + env(safe-area-inset-left)); display: none; }
+  body.jugando #btnPausa { display: flex; }
+  @media (max-height: 720px) {
+    h1 { font-size: clamp(40px, 10vh, 70px); }
+    .sub { margin-bottom: 10px; }
+    .historia { font-size: 14px; margin-bottom: 10px; line-height: 1.4; }
+    .reglas { font-size: 13px; line-height: 1.4; padding: 8px 14px; margin-bottom: 12px; }
+    .btn { padding: 11px 30px; font-size: 16px; }
+    .pista { margin-top: 8px; }
+  }
+  .boton-redondo svg { width: 20px; height: 20px; fill: currentColor; }
+</style>
+</head>
+<body>
+<canvas id="lienzo" aria-label="Farol, juego"></canvas>
+
+<button id="btnDestello" class="boton-redondo" aria-label="Destello">
+  <svg viewBox="0 0 24 24" fill="#ffd27a"><path d="M12 1l2.2 6.6L21 5l-3.7 6 5.7 1-5.7 1L21 19l-6.8-2.6L12 23l-2.2-6.6L3 19l3.7-6L1 12l5.7-1L3 5l6.8 2.6z"/></svg>
+  DESTELLO
+</button>
+<button id="btnSonido" class="boton-redondo pequeno" aria-label="Sonido (M)" title="Sonido (M)">
+  <svg viewBox="0 0 24 24"><path id="icoSonido" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+</button>
+<button id="btnPausa" class="boton-redondo pequeno" aria-label="Pausa (P)" title="Pausa (P)">
+  <svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+</button>
+
+<!-- Pantalla de inicio -->
+<div id="menu" class="capa">
+  <div class="panel">
+    <h1>FAROL</h1>
+    <div class="sub">La última llama del bosque</div>
+    <p class="historia">Cae la noche y las sombras salen del bosque hacia tu farol.
+      Gira su haz de luz para disolverlas antes de que lo alcancen…
+      pero la luz también espanta a las luciérnagas, que son tu único combustible.</p>
+    <div class="reglas">
+      <p class="solo-teclado"><b>Apuntar:</b> <kbd>←</kbd><kbd>→</kbd> o <kbd>A</kbd><kbd>D</kbd>, o mueve el ratón.</p>
+      <p class="solo-teclado"><b>Destello:</b> <kbd>Espacio</kbd> o clic (cuesta combustible).</p>
+      <p class="solo-tactil"><b>Apuntar:</b> toca o arrastra el dedo hacia donde quieras la luz.</p>
+      <p class="solo-tactil"><b>Destello:</b> botón ✸ o toca con un segundo dedo.</p>
+      <p><span class="ico" style="background:#a58bff"></span><b>Sombras:</b> mantenlas en la luz hasta que se disuelvan. Si tocan el farol, pierdes una llama (tienes 3).</p>
+      <p><span class="ico" style="background:#c8ff6a"></span><b>Luciérnagas:</b> aparta la luz y déjalas llegar: cada una recarga combustible. Sin combustible, el haz se encoge.</p>
+      <p><b>Combo:</b> disuelve sombras seguidas para multiplicar los puntos. Cada hora la noche se vuelve más oscura.</p>
+    </div>
+    <button id="btnJugar" class="btn">ENCENDER</button>
+    <div class="pista solo-teclado">o pulsa <kbd>Enter</kbd> · <kbd>P</kbd> pausa · <kbd>M</kbd> sonido</div>
+    <div class="record" id="recordMenu"></div>
+  </div>
+</div>
+
+<!-- Pausa -->
+<div id="pausa" class="capa" hidden>
+  <div class="panel">
+    <h2>Pausa</h2>
+    <p class="historia">La llama espera.</p>
+    <button id="btnSeguir" class="btn">CONTINUAR</button>
+    <div class="pista solo-teclado"><kbd>P</kbd> o <kbd>Enter</kbd> para seguir</div>
+  </div>
+</div>
+
+<!-- Fin de partida -->
+<div id="fin" class="capa" hidden>
+  <div class="panel">
+    <h2>La llama se apagó</h2>
+    <div class="puntos" id="finPuntos">0</div>
+    <div id="finRecord" class="record"></div>
+    <div class="stats">
+      <div><span>Sombras disueltas</span><b id="stSombras">0</b></div>
+      <div><span>Luciérnagas</span><b id="stLuci">0</b></div>
+      <div><span>Tiempo</span><b id="stTiempo">0:00</b></div>
+      <div><span>Hora alcanzada</span><b id="stHora">1</b></div>
+    </div>
+    <button id="btnOtra" class="btn">VOLVER A ENCENDER</button>
+    <div class="pista solo-teclado">o pulsa <kbd>Enter</kbd></div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

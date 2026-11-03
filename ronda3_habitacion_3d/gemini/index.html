@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Estancia 3D Interactiva — Salón y Estudio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Contenedor WebGL Three.js -->
+  <div id="canvas-container" aria-label="Escena 3D de salón y estudio"></div>
+
+  <!-- Mira central para apuntar en primera persona -->
+  <div id="crosshair">
+    <div class="ring"></div>
+    <div class="dot"></div>
+  </div>
+
+  <!-- Tooltip contextual al apuntar a una lámpara interactiva -->
+  <div id="interaction-prompt">
+    <span class="key-badge">CLIC / E</span>
+    <span id="prompt-text">Encender / Apagar lámpara</span>
+  </div>
+
+  <!-- HUD Superior Informativo y Controles Rápidos -->
+  <header id="hud-top">
+    <div id="room-info" class="hud-card">
+      <h1>
+        <span>Salón-Estudio 3D</span>
+      </h1>
+      <p>Recorre la estancia libremente. Haz clic o toca cualquiera de las <strong>4 lámparas</strong> para encenderlas o apagarlas.</p>
+      <div id="controls-help">
+        <span><kbd class="kbd">W</kbd><kbd class="kbd">A</kbd><kbd class="kbd">S</kbd><kbd class="kbd">D</kbd> o <kbd class="kbd">Flechas</kbd> Caminar</span>
+        <span><kbd class="kbd">Ratón</kbd> Mirar 360°</span>
+        <span><kbd class="kbd">Clic</kbd> / <kbd class="kbd">E</kbd> Lámparas</span>
+        <span><kbd class="kbd">Móvil</kbd> Joystick + Tocar</span>
+      </div>
+    </div>
+
+    <div id="hud-right">
+      <div id="stats-bar" class="hud-card">
+        <span class="stat-pill"><span class="dot-online"></span> <span id="fps-counter">60 FPS</span></span>
+        <span>|</span>
+        <span id="pos-indicator">Pos: (0.0, 1.8)</span>
+        <span>|</span>
+        <button id="btn-toggle-touch" class="hud-btn" type="button" title="Mostrar u ocultar controles táctiles en pantalla">
+          Controles Táctiles
+        </button>
+      </div>
+
+      <!-- Botonera de estado de las lámparas interactivas (también conmutables haciendo clic directo en 3D) -->
+      <div id="lamps-panel" aria-label="Estado de lámparas"></div>
+    </div>
+  </header>
+
+  <!-- Banner inferior para capturar ratón (Pointer Lock) o arrastrar -->
+  <div id="welcome-banner">
+    <div class="banner-text">
+      <strong>Modo Primera Persona:</strong> Arrastra con el ratón para mirar o activa la vista libre con puntero bloqueado.
+    </div>
+    <button id="btn-lock-pointer" type="button">Capturar Ratón (Vista 360°)</button>
+  </div>
+
+  <!-- Controles táctiles para móvil / tablet -->
+  <div id="touch-controls">
+    <div id="joystick-zone" aria-label="Joystick de movimiento">
+      <div id="joystick-knob"></div>
+      <span id="joystick-label">Moverse</span>
+    </div>
+    <div id="touch-look-hint">Arrastra a la derecha para mirar • Toca una lámpara</div>
+    <button id="touch-action-btn" type="button">💡 Lámpara cercana</button>
+  </div>
+
+  <!-- Librería Three.js incluida localmente (sin CDN ni recursos externos) -->
+  <script src="three.min.js"></script>
+  <!-- Lógica principal de la estancia 3D -->
+  <script src="app.js"></script>
+</body>
+</html>

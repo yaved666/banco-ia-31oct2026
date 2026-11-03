@@ -1,0 +1,434 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #111318;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #f4f4f6;
+  touch-action: none;
+}
+
+#canvas-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mira central (Crosshair) */
+#crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, opacity 0.2s ease;
+}
+
+#crosshair .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
+  transition: all 0.18s ease;
+}
+
+#crosshair .ring {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
+  transition: all 0.18s ease;
+}
+
+#crosshair.interactive {
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+#crosshair.interactive .dot {
+  background: #ffd166;
+  box-shadow: 0 0 10px #ffd166;
+}
+
+#crosshair.interactive .ring {
+  border-color: #ffd166;
+  box-shadow: 0 0 12px rgba(255, 209, 102, 0.65);
+}
+
+/* Tooltip de interacción con lámparas y objetos */
+#interaction-prompt {
+  position: fixed;
+  top: calc(50% + 24px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(18, 21, 28, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 209, 102, 0.55);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  z-index: 12;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+#interaction-prompt.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px);
+}
+
+#interaction-prompt .key-badge {
+  display: inline-block;
+  background: #ffd166;
+  color: #16181d;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 6px;
+  margin-right: 6px;
+  font-size: 0.78rem;
+}
+
+/* HUD Superior */
+#hud-top {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 15;
+  gap: 12px;
+}
+
+.hud-card {
+  background: rgba(17, 20, 27, 0.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 11px 15px;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+#room-info h1 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffd166;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#room-info p {
+  font-size: 0.8rem;
+  color: rgba(244, 244, 246, 0.85);
+  line-height: 1.35;
+}
+
+#controls-help {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 0.76rem;
+  color: rgba(244, 244, 246, 0.78);
+}
+
+.kbd {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.72rem;
+}
+
+/* Panel derecho de estado y acciones rápidas */
+#hud-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+#stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  padding: 8px 12px;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot-online {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #06d6a0;
+  box-shadow: 0 0 8px #06d6a0;
+}
+
+#lamps-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  max-width: 380px;
+}
+
+.hud-btn {
+  background: rgba(28, 33, 44, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f4f4f6;
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.hud-btn:hover {
+  background: rgba(45, 52, 68, 0.95);
+  border-color: rgba(255, 209, 102, 0.6);
+}
+
+.hud-btn.active {
+  background: rgba(255, 209, 102, 0.18);
+  border-color: #ffd166;
+  color: #ffd166;
+}
+
+.hud-btn .bulb-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #555b6e;
+  transition: all 0.2s ease;
+}
+
+.hud-btn.active .bulb-indicator {
+  background: #ffd166;
+  box-shadow: 0 0 8px #ffd166;
+}
+
+/* Modal / Banner de bienvenida para activar PointerLock o Modo Táctil */
+#welcome-banner {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 20, 27, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 209, 102, 0.45);
+  border-radius: 14px;
+  padding: 12px 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#welcome-banner.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+}
+
+#welcome-banner .banner-text {
+  font-size: 0.83rem;
+  color: #e9ecef;
+}
+
+#welcome-banner .banner-text strong {
+  color: #ffd166;
+}
+
+#btn-lock-pointer {
+  background: #ffd166;
+  color: #15171e;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+
+#btn-lock-pointer:hover {
+  background: #ffda85;
+  transform: translateY(-1px);
+}
+
+/* Controles táctiles para móvil / tablet */
+#touch-controls {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 14;
+  display: none;
+}
+
+#touch-controls.enabled {
+  display: block;
+}
+
+/* Zona de Joystick Virtual Izquierdo */
+#joystick-zone {
+  position: absolute;
+  left: 24px;
+  bottom: 26px;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: rgba(17, 20, 27, 0.48);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+#joystick-knob {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd166, #e09f3e);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: translate(0px, 0px);
+  pointer-events: none;
+}
+
+#joystick-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* Botón táctil de acción rápida (Encender/Apagar lámpara) */
+#touch-action-btn {
+  position: absolute;
+  right: 28px;
+  bottom: 42px;
+  padding: 13px 18px;
+  border-radius: 999px;
+  background: rgba(255, 209, 102, 0.92);
+  color: #14161d;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 2px solid #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  touch-action: manipulation;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#touch-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Indicador de zona de vista táctil derecha */
+#touch-look-hint {
+  position: absolute;
+  right: 28px;
+  bottom: 105px;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(17, 20, 27, 0.55);
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* Adaptación en pantallas móviles pequeñas */
+@media (max-width: 768px) {
+  #hud-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #hud-right {
+    align-items: flex-start;
+  }
+
+  #lamps-panel {
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  #controls-help {
+    display: none;
+  }
+
+  #welcome-banner {
+    display: none;
+  }
+
+  #touch-controls {
+    display: block;
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "width": 375,
+    "overflow": false,
+    "form": "OK: vacío, espacios, correo inválido, mensaje corto, envío válido mediante teclado sin peticiones",
+    "navigation": "OK: salto al contenido y cuatro anclas",
+    "javascriptErrors": [],
+    "externalRequests": [],
+    "accessibilityViolations": []
+  },
+  {
+    "width": 1440,
+    "overflow": false,
+    "form": "OK: vacío, espacios, correo inválido, mensaje corto, envío válido mediante teclado sin peticiones",
+    "navigation": "OK: salto al contenido y cuatro anclas",
+    "javascriptErrors": [],
+    "externalRequests": [],
+    "accessibilityViolations": []
+  },
+  {
+    "localFile": "OK: estilos, JavaScript y confirmación al abrir index.html directamente"
+  },
+  {
+    "javascriptDisabled": "OK: contenido disponible, botón desactivado y aviso visible"
+  }
+]

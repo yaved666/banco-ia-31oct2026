@@ -1,0 +1,13 @@
+{
+  "f01_sqli_busqueda": "ARREGLADO",
+  "f02_sqli_login": "ARREGLADO",
+  "f03_xss_resenas": "ARREGLADO",
+  "f04_hash_debil": "ARREGLADO",
+  "f05_secretos_en_codigo": "ARREGLADO",
+  "f06_admin_sin_rol": "ARREGLADO",
+  "f07_idor_pedidos": "ARREGLADO",
+  "f08_traversal_factura": "ARREGLADO",
+  "f09_subida_sin_validar": "ARREGLADO",
+  "f10_precio_del_cliente": "ARREGLADO",
+  "f11_modo_debug": "ARREGLADO"
+}

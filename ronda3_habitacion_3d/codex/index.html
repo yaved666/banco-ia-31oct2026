@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ebe8df"><title>Estancia — La pausa cotidiana</title>
+<link rel="stylesheet" href="style.css"><script defer src="vendor/three.min.js"></script><script defer src="room.js"></script>
+</head>
+<body>
+<canvas id="world" aria-label="Sala de estar en tres dimensiones. Usa WASD o las flechas para caminar y arrastra para mirar."></canvas>
+<header><a class="brand" href="./index.html" aria-label="Estancia, inicio"><span class="brand-icon">∩</span><span>estancia<span class="brand-sub">UN LUGAR PARA ESTAR</span></span></a><div class="chapter"><span>LA CASA</span><i>/</i> SALÓN 01</div><span class="live"><b></b> EXPERIENCIA 3D</span></header>
+<main>
+<section id="intro" class="intro"><div class="eyebrow"><span></span> HABITAR, SIN PRISA</div><h1>La pausa<br><em>cotidiana.</em></h1><p>Luz de tarde, madera y un rincón para ti.<br>Entra. Esta casa se descubre caminando.</p><button id="enter" class="primary">Entrar a explorar <span>↗</span></button><div class="intro-note">UN ESPACIO HECHO DE CÓDIGO. Y CALMA.</div></section>
+<aside id="guide" class="guide"><div class="guide-head"><span>SIÉNTETE EN CASA</span><button id="close-guide" aria-label="Cerrar instrucciones">×</button></div><div class="guide-row"><span class="keys">W A S D</span><span>Muévete a tu ritmo<small>También con las flechas</small></span></div><div class="guide-row"><span class="line-icon">↔</span><span>Arrastra para mirar<small>O activa el ratón libre al entrar</small></span></div><div class="guide-row"><span class="line-icon">☼</span><span>Juega con la luz<small>Toca la lámpara para encenderla</small></span></div><div class="touch-guide">Usa el joystick para caminar y desliza sobre la habitación para mirar.</div></aside>
+<div id="crosshair" aria-hidden="true"></div><div id="target-label">Encender lámpara <kbd>E</kbd></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="room-caption"><span class="room-dot"></span> SALÓN DE TARDE <span class="caption-line"></span><span class="area">10 × 8 M</span></div>
+<div class="map" aria-label="Plano de la habitación y tu posición"><div class="map-label">ESTÁS AQUÍ <span>N ↑</span></div><svg viewBox="0 0 150 120" aria-hidden="true"><path class="map-wall" d="M9 38V9H141V111H9V80"/><path class="map-window" d="M9 38V80"/><rect x="39" y="19" width="52" height="18" rx="3"/><rect x="48" y="52" width="40" height="20" rx="7"/><rect x="16" y="63" width="20" height="24" rx="4"/><rect x="119" y="24" width="13" height="40" rx="1"/><path id="map-heading" d="M0 -8L-5 3L5 3Z"/><circle id="map-player" r="3"/></svg></div>
+</main>
+<footer><span class="footer-copy">ESPACIOS QUE SE HABITAN.</span><div class="toolbar"><button id="help" title="Ver controles" aria-label="Ver controles"><span>?</span></button><i></i><button id="light" aria-pressed="true"><span class="sun-icon">☼</span><span class="light-text">Luz cálida</span><b id="light-dot"></b></button><i></i><button id="reset" title="Volver al punto de entrada" aria-label="Volver al punto de entrada">↺ <span class="reset-text">Reiniciar vista</span></button><i></i><button id="fullscreen" title="Pantalla completa" aria-label="Pantalla completa">⛶</button></div><span id="explore-hint">ARRASTRA PARA MIRAR <span>↔</span></span></footer>
+<div id="touch-controls"><div id="joystick" aria-label="Joystick para caminar"><div id="stick"></div></div><span class="touch-move">CAMINAR</span><button id="touch-action" aria-label="Interactuar con lámpara">☼</button><span class="touch-look">DESLIZA PARA MIRAR ↔</span></div>
+<div id="error" hidden><h2>No se pudo iniciar la escena 3D</h2><p>Activa WebGL o la aceleración gráfica del navegador y vuelve a abrir esta página.</p></div>
+</body></html>

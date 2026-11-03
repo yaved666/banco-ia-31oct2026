@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SINTONÍA: Tejedor de Fase — Videojuego 2D Original</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="game-container" aria-label="Área de juego Sintonía: Tejedor de Fase">
+    <!-- Lienzo 2D principal a 60 FPS -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ====================================================================
+         HUD SUPERIOR DURANTE LA PARTIDA
+         ==================================================================== -->
+    <header id="hud" class="hidden" aria-live="polite">
+      <!-- Panel Izquierdo: Integridad, Polaridad y Nivel de Frecuencia -->
+      <div class="hud-panel hud-left">
+        <div class="hud-row">
+          <span class="hud-label">Integridad</span>
+          <div id="integrity-pips" class="integrity-pips" aria-label="Escudos del Ancla"></div>
+        </div>
+        <div class="hud-row">
+          <span id="level-text" class="hud-label">FRECUENCIA NV. 1</span>
+          <div id="phase-indicator" class="phase-indicator cyan">
+            <span class="phase-dot"></span>
+            <span id="phase-text">FASE CIAN (+)</span>
+          </div>
+        </div>
+        <div class="wave-bar-track" title="Progreso hacia el siguiente Nivel de Frecuencia">
+          <div id="wave-bar-fill" class="wave-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Panel Central: Puntuación, Récord y Multiplicador de Combo -->
+      <div class="hud-panel hud-center">
+        <div id="score-text" class="score-main">0</div>
+        <div class="score-subrow">
+          <span id="best-score-text">RÉCORD: 0</span>
+          <span id="combo-badge" class="combo-badge">×1</span>
+        </div>
+        <div class="combo-timer-track" title="Tiempo restante de combo">
+          <div id="combo-timer-fill" class="combo-timer-fill"></div>
+        </div>
+      </div>
+
+      <!-- Panel Derecho: Medidor de Sobrecarga Áurea y Acciones Rápidas -->
+      <div id="overdrive-container" class="hud-panel hud-right">
+        <div class="hud-row">
+          <span class="hud-label">Sobrecarga Áurea</span>
+          <span id="overdrive-status" class="hud-label" style="color: #ffd147;">0%</span>
+        </div>
+        <div class="overdrive-track">
+          <div id="overdrive-fill" class="overdrive-fill"></div>
+        </div>
+        <div class="hud-actions">
+          <span id="fps-badge" class="fps-badge">60 FPS</span>
+          <button id="btn-touch-toggle" class="icon-btn" type="button" title="Mostrar/Ocultar controles táctiles">📱 Táctil</button>
+          <button id="btn-mute" class="icon-btn" type="button" title="Silenciar/Activar sonido (M)">🔊 Sonido</button>
+          <button id="btn-pause" class="icon-btn" type="button" title="Pausar partida (P o Esc)">⏸ Pausa</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Anuncio contextual de oleadas, tríadas y jefes -->
+    <div id="announcement-banner" role="status" aria-live="polite"></div>
+
+    <!-- Barra recordatoria de controles en escritorio -->
+    <div id="controls-hint-bar" class="hidden">
+      <span><kbd class="key-pill">WASD / Flechas</kbd>Mover Ancla</span>
+      <span><kbd class="key-pill">Espacio / Clic Izq</kbd>Latigazo de Tensión</span>
+      <span><kbd class="key-pill">Shift / Q / Clic Der</kbd>Cambiar Fase (+/-)</span>
+      <span><kbd class="key-pill">E / R</kbd>Sobrecarga Áurea</span>
+      <span><kbd class="key-pill">P</kbd>Pausa</span>
+    </div>
+
+    <!-- ====================================================================
+         CONTROLES TÁCTILES (MÓVIL Y TABLET)
+         ==================================================================== -->
+    <div id="touch-controls" class="hidden" aria-label="Controles táctiles">
+      <!-- Zona izquierda: Joystick analógico flotante -->
+      <div id="touch-joystick-zone">
+        <div id="joystick-base">
+          <div id="joystick-knob"></div>
+          <span class="joystick-hint">Mover Ancla</span>
+        </div>
+      </div>
+
+      <!-- Zona derecha: Botones de acción -->
+      <div class="touch-buttons-cluster">
+        <button id="touch-btn-overdrive" class="touch-btn touch-btn-overdrive" type="button" aria-label="Activar Sobrecarga Áurea">
+          <span class="touch-icon">★</span>
+          <span>Áurea</span>
+        </button>
+        <div class="touch-row">
+          <button id="touch-btn-phase" class="touch-btn touch-btn-phase cyan-mode" type="button" aria-label="Cambiar Fase Cian o Magenta">
+            <span class="touch-icon">⇄</span>
+            <span>Fase</span>
+          </button>
+          <button id="touch-btn-whip" class="touch-btn touch-btn-whip" type="button" aria-label="Ejecutar Latigazo de Tensión">
+            <span class="touch-icon">⚡</span>
+            <span>Latigazo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         PANTALLA DE INICIO
+         ==================================================================== -->
+    <section id="start-screen" class="overlay-screen" aria-labelledby="start-title">
+      <div class="modal-card">
+        <div class="title-header">
+          <span class="title-badge">Videojuego 2D Original • Física Armónica</span>
+          <h1 id="start-title" class="game-title">SINTONÍA: TEJEDOR DE FASE</h1>
+          <p class="game-subtitle">
+            Pilota el <strong>Ancla Resonante</strong> y domina el <strong>Orbe Armónico</strong> unido a ti por una cuerda de energía elástica. No disparas proyectiles: tu arma es la tensión física de la cuerda y los lazos geométricos que dibujas con su estela.
+          </p>
+        </div>
+
+        <!-- Reglas visuales principales -->
+        <div class="mechanics-grid">
+          <article class="mechanic-box cyan-accent">
+            <h3>1. Corte de Polaridad</h3>
+            <p>
+              Alterna entre <strong>Fase Cian (+)</strong> y <strong>Fase Magenta (-)</strong>. Tu Orbe y la Cuerda armonizan al instante cualquier anomalía de su <strong>misma polaridad</strong>, pero rebotan contra la opuesta. ¡Protege tu Ancla!
+            </p>
+          </article>
+          <article class="mechanic-box magenta-accent">
+            <h3>2. Latigazo de Tensión</h3>
+            <p>
+              Lanza el Orbe a gran velocidad cruzando tu Ancla. El <strong>Latigazo</strong> rompe escudos frontales de los <em>Prismas Blindados</em>, disipa proyectiles y encadena combos hasta <strong>×12</strong>.
+            </p>
+          </article>
+          <article class="mechanic-box gold-accent">
+            <h3>3. Lazo Armónico y Tríadas</h3>
+            <p>
+              Cruza la estela luminosa del Orbe consigo misma para <strong>cerrar un polígono</strong>: ¡toda anomalía encerrada dentro colapsa sin importar su color! Conecta además los 3 nodos de las <strong>Tríadas</strong> para recargar escudos.
+            </p>
+          </article>
+        </div>
+
+        <!-- Controles Teclado + Táctil -->
+        <div class="controls-grid">
+          <div class="control-col">
+            <h4>⌨ Controles en Ordenador</h4>
+            <ul class="control-list">
+              <li><span class="key-pill">WASD</span> o <span class="key-pill">Flechas</span> — Mover el Ancla</li>
+              <li><span class="key-pill">Espacio</span> o <span class="key-pill">Clic Izq</span> — Latigazo de Tensión</li>
+              <li><span class="key-pill">Shift</span> / <span class="key-pill">Q</span> / <span class="key-pill">Clic Der</span> — Cambiar Polaridad</li>
+              <li><span class="key-pill">E</span> o <span class="key-pill">R</span> — Sobrecarga Áurea (al 100%)</li>
+            </ul>
+          </div>
+          <div class="control-col">
+            <h4>📱 Controles Táctiles (Móvil / Tablet)</h4>
+            <ul class="control-list">
+              <li><strong>Pulgar Izquierdo:</strong> Joystick virtual dinámico para mover el Ancla.</li>
+              <li><strong>Botón ⚡ Latigazo:</strong> Impulsa el Orbe con fuerza cortante.</li>
+              <li><strong>Botón ⇄ Fase:</strong> Alterna polaridad Cian / Magenta.</li>
+              <li><strong>Botón ★ Áurea:</strong> Activa la fase dual dorada al llegar al 100%.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="start-footer">
+          <div class="mode-selector" role="group" aria-label="Seleccionar nivel de desafío inicial">
+            <button type="button" class="mode-btn active" data-mode="normal">Cámara Armónica (Estándar)</button>
+            <button type="button" class="mode-btn" data-mode="intense">Frecuencia Alta (Experto)</button>
+          </div>
+
+          <button id="btn-start-game" class="primary-btn" type="button">Iniciar Sintonía</button>
+          <div id="start-best-score" class="best-score-banner">Mejor Puntuación Registrada: 0 pts</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PANTALLA DE PAUSA
+         ==================================================================== -->
+    <section id="pause-screen" class="overlay-screen hidden" aria-labelledby="pause-title">
+      <div class="modal-card" style="max-width: 480px; text-align: center;">
+        <div class="title-header">
+          <span class="title-badge">Cámara en Espera</span>
+          <h2 id="pause-title" class="game-title" style="font-size: 2rem;">PARTIDA EN PAUSA</h2>
+          <p class="game-subtitle">La resonancia cuántica se encuentra suspendida.</p>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-resume" class="primary-btn" type="button">Continuar</button>
+          <button id="btn-restart-pause" class="secondary-btn" type="button">Reiniciar</button>
+          <button id="btn-menu-pause" class="secondary-btn" type="button">Menú Principal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PANTALLA DE FIN DE PARTIDA (GAME OVER)
+         ==================================================================== -->
+    <section id="gameover-screen" class="overlay-screen hidden" aria-labelledby="gameover-title">
+      <div class="modal-card" style="max-width: 640px;">
+        <div class="title-header">
+          <span class="title-badge" style="color: #ff66a8; border-color: rgba(255,42,133,0.4);">Integridad del Ancla Agotada</span>
+          <h2 id="gameover-title" class="game-title" style="font-size: 2.2rem;">COLAPSO DE SINTONÍA</h2>
+          <p class="game-subtitle">Resumen de tu resonancia alcanzada en la cámara:</p>
+        </div>
+
+        <div class="rank-banner">
+          <div class="stat-label">Puntuación Final</div>
+          <div style="font-family: var(--font-mono); font-size: 2.3rem; font-weight: 900; color: #ffffff; margin: 4px 0;">
+            <span id="final-score">0</span>
+            <span id="final-record-badge" class="new-record-pill hidden">¡Nuevo Récord!</span>
+          </div>
+          <div id="final-rank" class="rank-title">◇ INICIADO DE FASE ◇</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div id="final-level" class="stat-value highlight">Nivel 1</div>
+            <div class="stat-label">Frecuencia Máx.</div>
+          </div>
+          <div class="stat-card">
+            <div id="final-time" class="stat-value">0:00</div>
+            <div class="stat-label">Tiempo Activo</div>
+          </div>
+          <div class="stat-card">
+            <div id="final-harmonized" class="stat-value highlight">0</div>
+            <div class="stat-label">Armonizadas</div>
+          </div>
+          <div class="stat-card">
+            <div id="final-loops" class="stat-value gold">0</div>
+            <div class="stat-label">Lazos Cerrados</div>
+          </div>
+          <div class="stat-card">
+            <div id="final-max-combo" class="stat-value gold">×1</div>
+            <div class="stat-label">Combo Máximo</div>
+          </div>
+          <div class="stat-card">
+            <div id="final-triads" class="stat-value">0</div>
+            <div class="stat-label">Tríadas Completas</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-play-again" class="primary-btn" type="button">Volver a Jugar</button>
+          <button id="btn-menu-over" class="secondary-btn" type="button">Menú Principal</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

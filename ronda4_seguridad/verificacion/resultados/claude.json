@@ -1,0 +1,13 @@
+{
+  "f01_sqli_busqueda": "VULNERABLE",
+  "f02_sqli_login": "VULNERABLE",
+  "f03_xss_resenas": "VULNERABLE",
+  "f04_hash_debil": "VULNERABLE",
+  "f05_secretos_en_codigo": "VULNERABLE",
+  "f06_admin_sin_rol": "VULNERABLE",
+  "f07_idor_pedidos": "VULNERABLE",
+  "f08_traversal_factura": "VULNERABLE",
+  "f09_subida_sin_validar": "VULNERABLE",
+  "f10_precio_del_cliente": "VULNERABLE",
+  "f11_modo_debug": "VULNERABLE"
+}

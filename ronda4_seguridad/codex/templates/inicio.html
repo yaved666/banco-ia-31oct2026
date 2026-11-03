@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block contenido %}
+<form class="buscar" method="get">
+  <input name="q" value="{{ q }}" placeholder="Buscar productos" aria-label="Buscar productos">
+  <button>Buscar</button>
+</form>
+{% if q %}<p>Resultados para "{{ q }}"</p>{% endif %}
+<ul class="productos">
+{% for p in productos %}
+  <li><a href="{{ url_for('producto', pid=p['id']) }}">{{ p['nombre'] }}</a>
+      <span class="precio">{{ '%.2f'|format(p['precio']) }} EUR</span></li>
+{% else %}
+  <li>No hay productos.</li>
+{% endfor %}
+</ul>
+{% endblock %}

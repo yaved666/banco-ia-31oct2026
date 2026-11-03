@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h1>Administracion</h1>
+<h2>Usuarios</h2>
+<table>
+  <tr><th>ID</th><th>Email</th><th>Nombre</th><th>Rol</th></tr>
+  {% for x in usuarios %}
+  <tr><td>{{ x['id'] }}</td><td>{{ x['email'] }}</td><td>{{ x['nombre'] }}</td><td>{{ x['rol'] }}</td></tr>
+  {% endfor %}
+</table>
+<h2>Pedidos</h2>
+<table>
+  <tr><th>ID</th><th>Usuario</th><th>Total</th><th>Direccion</th></tr>
+  {% for o in pedidos %}
+  <tr><td>{{ o['id'] }}</td><td>{{ o['usuario_id'] }}</td><td>{{ '%.2f'|format(o['total']) }}</td><td>{{ o['direccion'] }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

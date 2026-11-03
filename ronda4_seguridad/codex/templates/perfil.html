@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h1>Mi perfil</h1>
+<p>{{ usuario['nombre'] }} ({{ usuario['email'] }})</p>
+{% if usuario['avatar'] %}
+<img src="{{ url_for('avatar', uid=usuario['id']) }}" alt="Tu foto de perfil" width="96">
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Foto de perfil <input type="file" name="avatar"></label>
+  <button>Subir</button>
+</form>
+{% endblock %}
